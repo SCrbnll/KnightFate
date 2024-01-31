@@ -255,7 +255,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6065998077702481268, guid: a4b4a6d32bcb19248a754d6602ffc7e4, type: 3}
       propertyPath: enemyLayers.m_Bits
-      value: 0
+      value: 1024
       objectReference: {fileID: 0}
     - target: {fileID: 6323719953710832613, guid: a4b4a6d32bcb19248a754d6602ffc7e4, type: 3}
       propertyPath: m_Name
@@ -10521,6 +10521,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6323719953710832613, guid: a4b4a6d32bcb19248a754d6602ffc7e4, type: 3}
   m_PrefabInstance: {fileID: 14990411}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &473581241 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8413529789942519730, guid: a4b4a6d32bcb19248a754d6602ffc7e4, type: 3}
+  m_PrefabInstance: {fileID: 14990411}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &515688296
 GameObject:
   m_ObjectHideFlags: 0
@@ -11669,7 +11674,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -5881328258480076267, guid: f0ddd95501b923348be0a40fd56a496b, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -12807,8 +12813,8 @@ MonoBehaviour:
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_StandbyUpdate: 2
-  m_LookAt: {fileID: 473581240}
-  m_Follow: {fileID: 473581240}
+  m_LookAt: {fileID: 473581241}
+  m_Follow: {fileID: 473581241}
   m_Lens:
     FieldOfView: 20
     OrthographicSize: 2.9008148
