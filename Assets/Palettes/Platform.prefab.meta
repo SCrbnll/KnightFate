@@ -1,6 +1,12 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Palettes/Platform.prefab.meta
 guid: ffca7a407087bc34fa9dbda598826024
 PrefabImporter:
+========
+guid: 8243a229bc2369d40990029f204ee6da
+folderAsset: yes
+DefaultImporter:
+>>>>>>>> d02e88f22a9f2c309f76c2a4c9099f701d3df77a:Assets/Sprites/Enemies/Walking.meta
   externalObjects: {}
   userData: 
   assetBundleName: 

@@ -1,8 +1,14 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Animations/Environment.meta
 guid: 0b372a0a4c098074492926a89a0f531e
 folderAsset: yes
 DefaultImporter:
+========
+guid: ea52dcc39103d2f4c951839599ddaa19
+NativeFormatImporter:
+>>>>>>>> d02e88f22a9f2c309f76c2a4c9099f701d3df77a:Assets/Tiles/tileset_0.asset.meta
   externalObjects: {}
+  mainObjectFileID: 11400000
   userData: 
   assetBundleName: 
   assetBundleVariant: 

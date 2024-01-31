@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Sprites/Enemies/Walking.meta
 guid: 8243a229bc2369d40990029f204ee6da
+========
+guid: 0b372a0a4c098074492926a89a0f531e
+>>>>>>>> d02e88f22a9f2c309f76c2a4c9099f701d3df77a:Assets/Animations/Environment.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

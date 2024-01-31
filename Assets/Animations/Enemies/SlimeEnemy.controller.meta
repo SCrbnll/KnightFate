@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Animations/Enemies/SlimeEnemy.controller.meta
 guid: b53748afd861a3448ae79171ff18cb0f
+========
+guid: 6f56073bae0c90648aeb52b4824aa171
+>>>>>>>> d02e88f22a9f2c309f76c2a4c9099f701d3df77a:Assets/Animations/Environment/Background.controller.meta
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 9100000
