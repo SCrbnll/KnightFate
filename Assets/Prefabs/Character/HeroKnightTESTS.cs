@@ -18,8 +18,6 @@ public class HeroKnightTESTS : MonoBehaviour {
     private int m_currentAttack = 0;
     private float m_timeSinceAttack = 0.0f;
     private float m_delayToIdle = 0.0f;
-
-    public Vector3 initialPosition; // X:-19.9  Y:-5.165
     public float delay;
 
 
@@ -168,7 +166,10 @@ public class HeroKnightTESTS : MonoBehaviour {
     IEnumerator EnableCollider(float delay, Collider2D collider)
      {
         yield return new WaitForSeconds(delay);
-        collider.enabled = true;
+        if(collider != null)
+        {
+            collider.enabled = true;
+        }
      }
     
 }

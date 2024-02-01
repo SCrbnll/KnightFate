@@ -6,7 +6,6 @@ public class HeroKnight : MonoBehaviour {
 
     [SerializeField] float m_speed = 4.0f;
     [SerializeField] float m_jumpForce = 7.5f;
-    [SerializeField] bool m_noBlood = false;
     [SerializeField] CircleCollider2D m_groundSensor;
 
     public Transform attackPoint;
@@ -21,8 +20,6 @@ public class HeroKnight : MonoBehaviour {
     private float m_timeSinceAttack = 0.0f;
     private float m_delayToIdle = 0.0f;
 
-    private int lives = 3;
-    public Vector3 initialPosition; // X:-19.9  Y:-5.165
     public float delay;
     private RigidbodyConstraints2D initialConfigurationRigidBody2D;
 
@@ -32,6 +29,7 @@ public class HeroKnight : MonoBehaviour {
     private Vector3 posicionInicialJugador;
 
     private float movementButton = 0.0f;
+    
 
 
     // Use this for initialization
@@ -53,38 +51,27 @@ public class HeroKnight : MonoBehaviour {
         float inputX = Input.GetAxis("Horizontal");
 
         // Swap direction of sprite depending on walk direction
-        if (movementButton > 0)
+        if (inputX > 0) // CAMBIAR A movementButton
         {
             GetComponent<SpriteRenderer>().flipX = false;
         }
             
-        else if (movementButton < 0)
+        else if (inputX < 0) // CAMBIAR A movementButton
         {
             GetComponent<SpriteRenderer>().flipX = true;
         }
 
         // Move
-        m_body2d.velocity = new Vector2(movementButton * m_speed, m_body2d.velocity.y);
+        m_body2d.velocity = new Vector2(inputX * m_speed, m_body2d.velocity.y);
+        //m_body2d.velocity = new Vector2(movementButton * m_speed, m_body2d.velocity.y);
 
         //Set AirSpeed in animator
         m_animator.SetFloat("AirSpeedY", m_body2d.velocity.y);
 
         // -- Handle Animations --
 
-        //Death
-        if (Input.GetKeyDown("e"))
-        {
-            m_animator.SetBool("noBlood", m_noBlood);
-            m_animator.SetTrigger("Death");
-        }
-            
-        //Hurt
-        else if (Input.GetKeyDown("q"))
-            m_animator.SetTrigger("Hurt");
-
         //Attack
-        /*
-        else if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f)
+        if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f)
         {
             m_currentAttack++;
 
@@ -112,7 +99,7 @@ public class HeroKnight : MonoBehaviour {
             // Reset timer
             m_timeSinceAttack = 0.0f;
         }
-        */
+        
 
         //Jump
         else if (Input.GetKeyDown("space"))
@@ -127,7 +114,7 @@ public class HeroKnight : MonoBehaviour {
     }
 
         //Run
-        else if (Mathf.Abs(movementButton) > Mathf.Epsilon)
+        else if (Mathf.Abs(inputX) > Mathf.Epsilon) // CAMBIAR A movementButton
         {
             // Reset timer
             m_delayToIdle = 0.05f;
@@ -201,20 +188,27 @@ public class HeroKnight : MonoBehaviour {
         } 
         else if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
-            lives--;
-            if (lives <= 0)
+            GameManager.lives--;
+            if (GameManager.lives == 1)
             {   
-                // Cambiar escena
                 Debug.Log("You are dead");
+                m_animator.SetBool("noBlood", false);
+                m_animator.SetTrigger("Death");
+                collision.enabled = false;
+                m_body2d.bodyType = RigidbodyType2D.Static;
+                // CAMBIAR ESCENA
             } 
-            
-            collision.enabled = false;
-            m_animator.SetTrigger("Hurt");
-            StartCoroutine(EnableCollider(delay, collision));
+            else
+            {
+                collision.enabled = false;
+                m_animator.SetTrigger("Hurt");
+                StartCoroutine(EnableCollider(delay, collision));
+            }    
         }
         else if (collision.gameObject.layer == LayerMask.NameToLayer("Door"))
         {
-            SceneManager.LoadScene("SecondLevel");
+            GameManager.lives = 4;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
             Debug.Log("You pass the door");
         } 
 
@@ -233,12 +227,16 @@ public class HeroKnight : MonoBehaviour {
         } 
 
         if (collision.gameObject.tag == "Trap") {
-            lives--;
+            GameManager.lives--;
             transform.position = posicionInicialJugador;
 
-            if (lives <= 0)
+            if (GameManager.lives == 1)
             {   
-                Debug.Log("You are dead");
+                m_animator.SetBool("noBlood", false);
+                m_animator.SetTrigger("Death");
+                collision.enabled = false;
+                m_body2d.constraints = RigidbodyConstraints2D.FreezePosition;
+                // CAMBIAR ESCENA
             } 
         }
     }
@@ -258,9 +256,12 @@ public class HeroKnight : MonoBehaviour {
     }
 
     IEnumerator EnableCollider(float delay, Collider2D collider)
-    {
+     {
         yield return new WaitForSeconds(delay);
-        collider.enabled = true;
-    }
+        if(collider != null)
+        {
+            collider.enabled = true;
+        }
+     }
     
 }
