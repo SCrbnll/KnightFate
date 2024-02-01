@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class HeroKnight : MonoBehaviour {
 
@@ -25,6 +26,13 @@ public class HeroKnight : MonoBehaviour {
     public float delay;
     private RigidbodyConstraints2D initialConfigurationRigidBody2D;
 
+    private int gems = 7;
+    public GameObject puertaSinAnimar;
+
+    private Vector3 posicionInicialJugador;
+
+    private float movementButton = 0.0f;
+
 
     // Use this for initialization
     void Start ()
@@ -32,6 +40,7 @@ public class HeroKnight : MonoBehaviour {
         m_animator = GetComponent<Animator>();
         m_body2d = GetComponent<Rigidbody2D>();
         initialConfigurationRigidBody2D = m_body2d.constraints;
+        posicionInicialJugador = transform.position;
     }
 
     // Update is called once per frame
@@ -44,18 +53,18 @@ public class HeroKnight : MonoBehaviour {
         float inputX = Input.GetAxis("Horizontal");
 
         // Swap direction of sprite depending on walk direction
-        if (inputX > 0)
+        if (movementButton > 0)
         {
             GetComponent<SpriteRenderer>().flipX = false;
         }
             
-        else if (inputX < 0)
+        else if (movementButton < 0)
         {
             GetComponent<SpriteRenderer>().flipX = true;
         }
 
         // Move
-        m_body2d.velocity = new Vector2(inputX * m_speed, m_body2d.velocity.y);
+        m_body2d.velocity = new Vector2(movementButton * m_speed, m_body2d.velocity.y);
 
         //Set AirSpeed in animator
         m_animator.SetFloat("AirSpeedY", m_body2d.velocity.y);
@@ -74,6 +83,7 @@ public class HeroKnight : MonoBehaviour {
             m_animator.SetTrigger("Hurt");
 
         //Attack
+        /*
         else if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f)
         {
             m_currentAttack++;
@@ -102,6 +112,7 @@ public class HeroKnight : MonoBehaviour {
             // Reset timer
             m_timeSinceAttack = 0.0f;
         }
+        */
 
         //Jump
         else if (Input.GetKeyDown("space"))
@@ -116,7 +127,7 @@ public class HeroKnight : MonoBehaviour {
     }
 
         //Run
-        else if (Mathf.Abs(inputX) > Mathf.Epsilon)
+        else if (Mathf.Abs(movementButton) > Mathf.Epsilon)
         {
             // Reset timer
             m_delayToIdle = 0.05f;
@@ -130,6 +141,54 @@ public class HeroKnight : MonoBehaviour {
             m_delayToIdle -= Time.deltaTime;
                 if(m_delayToIdle < 0)
                     m_animator.SetInteger("AnimState", 0);
+        }
+    }
+
+    public void Move(float amount) 
+    {
+        movementButton = amount;
+    }
+
+    public void Jump() 
+    {
+        if (canJump)
+            {
+                m_animator.SetTrigger("Jump");
+                canJump = false;
+                m_animator.SetBool("Grounded", canJump);
+                m_body2d.velocity = new Vector2(m_body2d.velocity.x, m_jumpForce);
+            }
+    }
+
+    public void Attack() 
+    {
+        if (m_timeSinceAttack > 0.25f)
+        {
+            m_currentAttack++;
+
+            // Loop back to one after third attack
+            if (m_currentAttack > 3)
+                m_currentAttack = 1;
+
+            // Reset Attack combo if time since last attack is too large
+            if (m_timeSinceAttack > 1.0f)
+                m_currentAttack = 1;
+
+            // Call one of three attack animations "Attack1", "Attack2", "Attack3"
+            m_animator.SetTrigger("Attack" + m_currentAttack);
+
+            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+            foreach(Collider2D enemy in hitEnemies)
+            {
+                Debug.Log("Enemy hitted");
+                GameObject enemyObject = enemy.gameObject;
+                Destroy(enemyObject);
+            
+            }
+
+            // Reset timer
+            m_timeSinceAttack = 0.0f;
         }
     }
 
@@ -155,9 +214,33 @@ public class HeroKnight : MonoBehaviour {
         }
         else if (collision.gameObject.layer == LayerMask.NameToLayer("Door"))
         {
-             // Cambiar escena
-                Debug.Log("You pass the door");
+            SceneManager.LoadScene("SecondLevel");
+            Debug.Log("You pass the door");
         } 
+
+        if (collision.gameObject.tag == "Gem") 
+        {
+            Destroy(collision.gameObject);
+            gems--;
+            Debug.Log(gems);
+            if (gems <= 0) {
+                GameObject puertaAnimada = GameObject.FindGameObjectWithTag("AnimatedDoor");
+                if (puertaAnimada != null) {
+                    Destroy(puertaAnimada);
+                    Instantiate(puertaSinAnimar, puertaAnimada.transform.position, puertaAnimada.transform.rotation);
+                }
+            }
+        } 
+
+        if (collision.gameObject.tag == "Trap") {
+            lives--;
+            transform.position = posicionInicialJugador;
+
+            if (lives <= 0)
+            {   
+                Debug.Log("You are dead");
+            } 
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -175,9 +258,9 @@ public class HeroKnight : MonoBehaviour {
     }
 
     IEnumerator EnableCollider(float delay, Collider2D collider)
-     {
+    {
         yield return new WaitForSeconds(delay);
         collider.enabled = true;
-     }
+    }
     
 }
