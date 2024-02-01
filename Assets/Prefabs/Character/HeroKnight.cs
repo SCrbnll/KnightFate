@@ -5,26 +5,25 @@ public class HeroKnight : MonoBehaviour {
 
     [SerializeField] float m_speed = 4.0f;
     [SerializeField] float m_jumpForce = 7.5f;
-    [SerializeField] float m_rollForce = 6.0f;
     [SerializeField] bool m_noBlood = false;
+    [SerializeField] CircleCollider2D m_groundSensor;
 
     public Transform attackPoint;
     public LayerMask enemyLayers;
     public float attackRange;
 
-
     private Animator m_animator;
     private Rigidbody2D m_body2d;
-    private Sensor_HeroKnight m_groundSensor;
-    private bool m_isWallSliding = false;
-    private bool m_grounded = false;
-    private bool m_rolling = false;
-    private int m_facingDirection = 1;
+    private bool canJump = false;
+
     private int m_currentAttack = 0;
     private float m_timeSinceAttack = 0.0f;
     private float m_delayToIdle = 0.0f;
-    private float m_rollDuration = 8.0f / 14.0f;
-    private float m_rollCurrentTime;
+
+    private int lives = 3;
+    public Vector3 initialPosition; // X:-19.9  Y:-5.165
+    public float delay;
+    private RigidbodyConstraints2D initialConfigurationRigidBody2D;
 
 
     // Use this for initialization
@@ -32,7 +31,7 @@ public class HeroKnight : MonoBehaviour {
     {
         m_animator = GetComponent<Animator>();
         m_body2d = GetComponent<Rigidbody2D>();
-        m_groundSensor = transform.Find("GroundSensor").GetComponent<Sensor_HeroKnight>();
+        initialConfigurationRigidBody2D = m_body2d.constraints;
     }
 
     // Update is called once per frame
@@ -41,28 +40,6 @@ public class HeroKnight : MonoBehaviour {
         // Increase timer that controls attack combo
         m_timeSinceAttack += Time.deltaTime;
 
-        // Increase timer that checks roll duration
-        if(m_rolling)
-            m_rollCurrentTime += Time.deltaTime;
-
-        // Disable rolling if timer extends duration
-        if(m_rollCurrentTime > m_rollDuration)
-            m_rolling = false;
-
-        //Check if character just landed on the ground
-        if (!m_grounded && m_groundSensor.State())
-        {
-            m_grounded = true;
-            m_animator.SetBool("Grounded", m_grounded);
-        }
-
-        //Check if character just started falling
-        if (m_grounded && !m_groundSensor.State())
-        {
-            m_grounded = false;
-            m_animator.SetBool("Grounded", m_grounded);
-        }
-
         // -- Handle input and movement --
         float inputX = Input.GetAxis("Horizontal");
 
@@ -70,18 +47,15 @@ public class HeroKnight : MonoBehaviour {
         if (inputX > 0)
         {
             GetComponent<SpriteRenderer>().flipX = false;
-            m_facingDirection = 1;
         }
             
         else if (inputX < 0)
         {
             GetComponent<SpriteRenderer>().flipX = true;
-            m_facingDirection = -1;
         }
 
         // Move
-        if (!m_rolling )
-            m_body2d.velocity = new Vector2(inputX * m_speed, m_body2d.velocity.y);
+        m_body2d.velocity = new Vector2(inputX * m_speed, m_body2d.velocity.y);
 
         //Set AirSpeed in animator
         m_animator.SetFloat("AirSpeedY", m_body2d.velocity.y);
@@ -89,18 +63,18 @@ public class HeroKnight : MonoBehaviour {
         // -- Handle Animations --
 
         //Death
-        if (Input.GetKeyDown("e") && !m_rolling)
+        if (Input.GetKeyDown("e"))
         {
             m_animator.SetBool("noBlood", m_noBlood);
             m_animator.SetTrigger("Death");
         }
             
         //Hurt
-        else if (Input.GetKeyDown("q") && !m_rolling)
+        else if (Input.GetKeyDown("q"))
             m_animator.SetTrigger("Hurt");
 
         //Attack
-        else if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f && !m_rolling)
+        else if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f)
         {
             m_currentAttack++;
 
@@ -119,7 +93,7 @@ public class HeroKnight : MonoBehaviour {
 
             foreach(Collider2D enemy in hitEnemies)
             {
-                Debug.Log("Enemigo atacado");
+                Debug.Log("Enemy hitted");
                 GameObject enemyObject = enemy.gameObject;
                 Destroy(enemyObject);
             
@@ -129,34 +103,17 @@ public class HeroKnight : MonoBehaviour {
             m_timeSinceAttack = 0.0f;
         }
 
-        // Block
-        else if (Input.GetMouseButtonDown(1) && !m_rolling)
-        {
-            m_animator.SetTrigger("Block");
-            m_animator.SetBool("IdleBlock", true);
-        }
-
-        else if (Input.GetMouseButtonUp(1))
-            m_animator.SetBool("IdleBlock", false);
-
-        // Roll
-        else if (Input.GetKeyDown("left shift") && !m_rolling && !m_isWallSliding)
-        {
-            m_rolling = true;
-            m_animator.SetTrigger("Roll");
-            m_body2d.velocity = new Vector2(m_facingDirection * m_rollForce, m_body2d.velocity.y);
-        }
-            
-
         //Jump
-        else if (Input.GetKeyDown("space") && m_grounded && !m_rolling)
+        else if (Input.GetKeyDown("space"))
         {
-            m_animator.SetTrigger("Jump");
-            m_grounded = false;
-            m_animator.SetBool("Grounded", m_grounded);
-            m_body2d.velocity = new Vector2(m_body2d.velocity.x, m_jumpForce);
-            m_groundSensor.Disable(0.2f);
-        }
+            if (canJump)
+            {
+                m_animator.SetTrigger("Jump");
+                canJump = false;
+                m_animator.SetBool("Grounded", canJump);
+                m_body2d.velocity = new Vector2(m_body2d.velocity.x, m_jumpForce);
+            }
+    }
 
         //Run
         else if (Mathf.Abs(inputX) > Mathf.Epsilon)
@@ -176,8 +133,51 @@ public class HeroKnight : MonoBehaviour {
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            canJump = true;
+            m_animator.SetBool("Grounded", canJump);
+        } 
+        else if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        {
+            lives--;
+            if (lives <= 0)
+            {   
+                // Cambiar escena
+                Debug.Log("You are dead");
+            } 
+            
+            collision.enabled = false;
+            m_animator.SetTrigger("Hurt");
+            StartCoroutine(EnableCollider(delay, collision));
+        }
+        else if (collision.gameObject.layer == LayerMask.NameToLayer("Door"))
+        {
+             // Cambiar escena
+                Debug.Log("You pass the door");
+        } 
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            canJump = false;
+            m_animator.SetBool("Grounded", canJump);
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
+
+    IEnumerator EnableCollider(float delay, Collider2D collider)
+     {
+        yield return new WaitForSeconds(delay);
+        collider.enabled = true;
+     }
+    
 }
