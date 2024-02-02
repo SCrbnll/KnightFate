@@ -32,6 +32,13 @@ public class HeroKnight : MonoBehaviour {
 
     public static bool hasKey = false;
     
+    public GameObject canvasElement;
+    public AudioSource audioSource;
+    public AudioClip hitSound;
+    public AudioClip deadSound;
+    public AudioClip hurtSound;
+    public AudioClip gemSound;
+
 
 
     // Use this for initialization
@@ -40,6 +47,10 @@ public class HeroKnight : MonoBehaviour {
         m_animator = GetComponent<Animator>();
         m_body2d = GetComponent<Rigidbody2D>();
         posicionInicialJugador = transform.position;
+        if(canvasElement != null)
+        {
+            canvasElement.SetActive(false);
+        }
     }
 
     // Update is called once per frame
@@ -92,6 +103,7 @@ public class HeroKnight : MonoBehaviour {
             foreach(Collider2D enemy in hitEnemies)
             {
                 Debug.Log("Enemy hitted");
+                audioSource.PlayOneShot(hitSound);
                 GameObject enemyObject = enemy.gameObject;
                 StartCoroutine(KillDelay(enemyObject));
             }
@@ -169,6 +181,7 @@ public class HeroKnight : MonoBehaviour {
             foreach(Collider2D enemy in hitEnemies)
             {
                 Debug.Log("Enemy hitted");
+                audioSource.PlayOneShot(hitSound);
                 GameObject enemyObject = enemy.gameObject;
                 StartCoroutine(KillDelay(enemyObject));
             }
@@ -191,6 +204,7 @@ public class HeroKnight : MonoBehaviour {
             if (CanvasHUD.health <= 0)
             {   
                 Debug.Log("You are dead");
+                audioSource.PlayOneShot(deadSound);
                 m_animator.SetBool("noBlood", false);
                 m_animator.SetTrigger("Death");
                 collision.enabled = false;
@@ -200,6 +214,7 @@ public class HeroKnight : MonoBehaviour {
             else
             {
                 collision.enabled = false;
+                audioSource.PlayOneShot(hurtSound);
                 m_animator.SetTrigger("Hurt");
                 StartCoroutine(EnableCollider(delay, collision));
             }    
@@ -213,6 +228,7 @@ public class HeroKnight : MonoBehaviour {
 
         if (collision.gameObject.tag == "Gem") 
         {
+            audioSource.PlayOneShot(gemSound);
             Destroy(collision.gameObject);
             gems--;
             Debug.Log(gems);
@@ -227,10 +243,12 @@ public class HeroKnight : MonoBehaviour {
 
         if (collision.gameObject.tag == "Trap") {
             CanvasHUD.health--;
+            audioSource.PlayOneShot(hurtSound);
             transform.position = posicionInicialJugador;
             
             if (CanvasHUD.health <= 0)
             {   
+                audioSource.PlayOneShot(deadSound);
                 m_animator.SetBool("noBlood", false);
                 m_animator.SetTrigger("Death");
                 collision.enabled = false;
@@ -256,6 +274,7 @@ public class HeroKnight : MonoBehaviour {
         }
 
         if (collision.gameObject.tag == "Key") {
+            audioSource.PlayOneShot(gemSound);
             Destroy(collision.gameObject);
             hasKey = true;
         }
@@ -263,6 +282,15 @@ public class HeroKnight : MonoBehaviour {
         if (collision.gameObject.tag == "GoFinal") {
             CanvasHUD.health = 3;
             SceneManager.LoadScene("FinalLevel");
+        }
+
+        if (collision.gameObject.tag == "NPC") {
+            canvasElement.SetActive(true);
+            if(canvasElement.activeSelf)
+            {
+                m_body2d.bodyType = RigidbodyType2D.Static;
+            }
+            m_body2d.bodyType = RigidbodyType2D.Dynamic;
         }
     }
 

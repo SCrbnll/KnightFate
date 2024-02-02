@@ -1,9 +1,9 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Scripts/Dialogue.cs.meta
-guid: 03a2413fa5728094bbf1d45cc0c36feb
-========
+<<<<<<<< HEAD:Assets/Scripts/Chest.cs.meta
 guid: 6998bba1152e9b140b1f46b48564133a
->>>>>>>> 0adf6957d1cac3f0ceba9443bdefc3d43b4382d6:Assets/Scripts/Chest.cs.meta
+========
+guid: 72b67efe5d0872a49a7d3edfa489f139
+>>>>>>>> 5abc77cb6b14c2b84ea87304015a4196786e011f:Assets/Scripts/Dialogue.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2

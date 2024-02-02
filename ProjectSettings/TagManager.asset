@@ -8,15 +8,12 @@ TagManager:
   - AnimatedDoor
   - Trap
   - ZOOM
-<<<<<<< HEAD
-  - NPC
-=======
   - Chest
   - Key
   - Obstaculo
   - ZonaObstaculo
   - GoFinal
->>>>>>> 0adf6957d1cac3f0ceba9443bdefc3d43b4382d6
+  - NPC
   layers:
   - Default
   - TransparentFX
@@ -53,4 +50,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Foreground
+    uniqueID: 1379973543
+    locked: 0
+  - name: Character
+    uniqueID: 1940622887
+    locked: 0
+  - name: Background
+    uniqueID: 3185081363
     locked: 0
