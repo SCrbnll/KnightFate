@@ -32,6 +32,7 @@ public class HeroKnight : MonoBehaviour {
 
     public static bool hasKey = false;
     
+    public GameObject canvasElement;
 
 
     // Use this for initialization
@@ -40,6 +41,7 @@ public class HeroKnight : MonoBehaviour {
         m_animator = GetComponent<Animator>();
         m_body2d = GetComponent<Rigidbody2D>();
         posicionInicialJugador = transform.position;
+        canvasElement.SetActive(false);
     }
 
     // Update is called once per frame
@@ -263,6 +265,15 @@ public class HeroKnight : MonoBehaviour {
         if (collision.gameObject.tag == "GoFinal") {
             CanvasHUD.health = 3;
             SceneManager.LoadScene("FinalLevel");
+        }
+
+        if (collision.gameObject.tag == "NPC") {
+            canvasElement.SetActive(true);
+            if(canvasElement.activeSelf)
+            {
+                m_body2d.bodyType = RigidbodyType2D.Static;
+            }
+            m_body2d.bodyType = RigidbodyType2D.Dynamic;
         }
     }
 
