@@ -8,6 +8,7 @@ TagManager:
   - AnimatedDoor
   - Trap
   - ZOOM
+  - NPC
   layers:
   - Default
   - TransparentFX
