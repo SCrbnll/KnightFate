@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class InterfaceStart : MonoBehaviour
 {
     public void StartGame() {
-        SceneManager.LoadScene("InitialLevel");
+        SceneManager.LoadScene("Instructions");
     }
 
     public void ExitGame() {

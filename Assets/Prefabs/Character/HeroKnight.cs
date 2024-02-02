@@ -34,11 +34,12 @@ public class HeroKnight : MonoBehaviour {
     
     public GameObject canvasElement;
     public AudioSource audioSource;
-    public AudioClip hitSound;
+    public AudioClip swordSound;
     public AudioClip deadSound;
     public AudioClip hurtSound;
     public AudioClip gemSound;
-
+    public AudioClip hitSound;
+    public AudioClip jumpSound;
 
 
     // Use this for initialization
@@ -63,19 +64,18 @@ public class HeroKnight : MonoBehaviour {
         float inputX = Input.GetAxis("Horizontal");
 
         // Swap direction of sprite depending on walk direction
-        if (inputX > 0) // CAMBIAR A movementButton
+        if (inputX > 0) // CAMBIAR inputX por movementButton para movil
         {
             GetComponent<SpriteRenderer>().flipX = false;
         }
             
-        else if (inputX < 0) // CAMBIAR A movementButton
+        else if (inputX < 0) // CAMBIAR inputX por movementButton para movil
         {
             GetComponent<SpriteRenderer>().flipX = true;
         }
 
         // Move
-        m_body2d.velocity = new Vector2(inputX * m_speed, m_body2d.velocity.y);
-        //m_body2d.velocity = new Vector2(movementButton * m_speed, m_body2d.velocity.y);
+        m_body2d.velocity = new Vector2(inputX * m_speed, m_body2d.velocity.y); // CAMBIAR inputX por movementButton para movil
 
         //Set AirSpeed in animator
         m_animator.SetFloat("AirSpeedY", m_body2d.velocity.y);
@@ -83,6 +83,7 @@ public class HeroKnight : MonoBehaviour {
         // -- Handle Animations --
 
         //Attack
+        
         if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f)
         {
             m_currentAttack++;
@@ -97,6 +98,7 @@ public class HeroKnight : MonoBehaviour {
 
             // Call one of three attack animations "Attack1", "Attack2", "Attack3"
             m_animator.SetTrigger("Attack" + m_currentAttack);
+            audioSource.PlayOneShot(swordSound);
 
             Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
@@ -114,10 +116,11 @@ public class HeroKnight : MonoBehaviour {
         
 
         //Jump
-        else if (Input.GetKeyDown("space"))
+        if (Input.GetKeyDown("space"))
         {
             if (canJump)
             {
+                audioSource.PlayOneShot(jumpSound);
                 m_animator.SetTrigger("Jump");
                 canJump = false;
                 m_animator.SetBool("Grounded", canJump);
@@ -126,7 +129,7 @@ public class HeroKnight : MonoBehaviour {
     }
 
         //Run
-        else if (Mathf.Abs(inputX) > Mathf.Epsilon) // CAMBIAR A movementButton
+        else if (Mathf.Abs(inputX) > Mathf.Epsilon) // CAMBIAR inputX por movementButton para movil
         {
             // Reset timer
             m_delayToIdle = 0.05f;
@@ -152,6 +155,7 @@ public class HeroKnight : MonoBehaviour {
     {
         if (canJump)
             {
+                audioSource.PlayOneShot(jumpSound);
                 m_animator.SetTrigger("Jump");
                 canJump = false;
                 m_animator.SetBool("Grounded", canJump);
@@ -175,6 +179,7 @@ public class HeroKnight : MonoBehaviour {
 
             // Call one of three attack animations "Attack1", "Attack2", "Attack3"
             m_animator.SetTrigger("Attack" + m_currentAttack);
+            audioSource.PlayOneShot(swordSound);
 
             Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
