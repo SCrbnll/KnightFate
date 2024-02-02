@@ -8,6 +8,11 @@ TagManager:
   - AnimatedDoor
   - Trap
   - ZOOM
+  - Chest
+  - Key
+  - Obstaculo
+  - ZonaObstaculo
+  - GoFinal
   layers:
   - Default
   - TransparentFX

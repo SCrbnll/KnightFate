@@ -29,6 +29,8 @@ public class HeroKnight : MonoBehaviour {
     private Vector3 posicionInicialJugador;
 
     private float movementButton = 0.0f;
+
+    public static bool hasKey = false;
     
 
 
@@ -91,8 +93,7 @@ public class HeroKnight : MonoBehaviour {
             {
                 Debug.Log("Enemy hitted");
                 GameObject enemyObject = enemy.gameObject;
-                Destroy(enemyObject);
-            
+                StartCoroutine(KillDelay(enemyObject));
             }
 
             // Reset timer
@@ -169,8 +170,7 @@ public class HeroKnight : MonoBehaviour {
             {
                 Debug.Log("Enemy hitted");
                 GameObject enemyObject = enemy.gameObject;
-                Destroy(enemyObject);
-            
+                StartCoroutine(KillDelay(enemyObject));
             }
 
             // Reset timer
@@ -245,7 +245,24 @@ public class HeroKnight : MonoBehaviour {
         }
 
         if (collision.gameObject.tag == "Finish") {
-            SceneManager.LoadScene("Start");                 // Añadir escena ganar
+            SceneManager.LoadScene("Winning");
+        }
+
+        if (collision.gameObject.tag == "ZonaObstaculo") {
+            if (hasKey == true) {
+                GameObject obstaculo = GameObject.FindGameObjectWithTag("Obstaculo");
+                Destroy(obstaculo);
+            }
+        }
+
+        if (collision.gameObject.tag == "Key") {
+            Destroy(collision.gameObject);
+            hasKey = true;
+        }
+
+        if (collision.gameObject.tag == "GoFinal") {
+            CanvasHUD.health = 3;
+            SceneManager.LoadScene("FinalLevel");
         }
     }
 
@@ -280,7 +297,13 @@ public class HeroKnight : MonoBehaviour {
      IEnumerator WaitForDeath()
      {
         yield return new WaitForSeconds(2.0f);
-        SceneManager.LoadScene("Start");
+        SceneManager.LoadScene("GameOver");
+     }
+
+     IEnumerator KillDelay(GameObject enemyObject)
+     {
+        yield return new WaitForSeconds(0.3f);
+        Destroy(enemyObject);
      }
     
 }
