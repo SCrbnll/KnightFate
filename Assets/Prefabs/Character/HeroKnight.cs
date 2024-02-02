@@ -245,7 +245,7 @@ public class HeroKnight : MonoBehaviour {
         }
 
         if (collision.gameObject.tag == "Finish") {
-            SceneManager.LoadScene("nose");                 // Añadir escena ganar
+            SceneManager.LoadScene("Start");                 // Añadir escena ganar
         }
     }
 
