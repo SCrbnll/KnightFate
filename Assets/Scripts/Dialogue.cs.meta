@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scripts/Chest.cs.meta
+guid: a3ad81a9be8dfaf4095aa22699e72261
+========
+guid: 72b67efe5d0872a49a7d3edfa489f139
+>>>>>>>> 5abc77cb6b14c2b84ea87304015a4196786e011f:Assets/Scripts/Dialogue.cs.meta
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
