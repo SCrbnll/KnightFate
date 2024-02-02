@@ -7,7 +7,6 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public List<Personajes> personajes;
-    public static int lives = 4;
 
     private void Awake()
     {
