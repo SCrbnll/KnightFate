@@ -354,12 +354,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a0d7ad33e18af3409a7675c6d1e3df9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  heartImages:
+  hearts:
   - {fileID: 5161941328753841827}
   - {fileID: 8401760514703977666}
   - {fileID: 4304059198483479647}
-  heartImage: {fileID: -5390123095117124330, guid: 74f8b4d56cb24724abef2f7c526fd9ca, type: 3}
-  noHeartImage: {fileID: -8880520576215733831, guid: 74f8b4d56cb24724abef2f7c526fd9ca, type: 3}
+  fullHeart: {fileID: -5390123095117124330, guid: 74f8b4d56cb24724abef2f7c526fd9ca, type: 3}
+  emptyHeart: {fileID: -8880520576215733831, guid: 74f8b4d56cb24724abef2f7c526fd9ca, type: 3}
 --- !u!1 &3169954050389369382
 GameObject:
   m_ObjectHideFlags: 0

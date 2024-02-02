@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using Cinemachine;
 
 public class HeroKnight : MonoBehaviour {
 
@@ -21,7 +22,6 @@ public class HeroKnight : MonoBehaviour {
     private float m_delayToIdle = 0.0f;
 
     public float delay;
-    private RigidbodyConstraints2D initialConfigurationRigidBody2D;
 
     private int gems = 7;
     public GameObject puertaSinAnimar;
@@ -37,7 +37,6 @@ public class HeroKnight : MonoBehaviour {
     {
         m_animator = GetComponent<Animator>();
         m_body2d = GetComponent<Rigidbody2D>();
-        initialConfigurationRigidBody2D = m_body2d.constraints;
         posicionInicialJugador = transform.position;
     }
 
@@ -188,15 +187,15 @@ public class HeroKnight : MonoBehaviour {
         } 
         else if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
-            GameManager.lives--;
-            if (GameManager.lives == 1)
+            CanvasHUD.health--;
+            if (CanvasHUD.health <= 0)
             {   
                 Debug.Log("You are dead");
                 m_animator.SetBool("noBlood", false);
                 m_animator.SetTrigger("Death");
                 collision.enabled = false;
                 m_body2d.bodyType = RigidbodyType2D.Static;
-                // CAMBIAR ESCENA
+                StartCoroutine(WaitForDeath());
             } 
             else
             {
@@ -207,7 +206,7 @@ public class HeroKnight : MonoBehaviour {
         }
         else if (collision.gameObject.layer == LayerMask.NameToLayer("Door"))
         {
-            GameManager.lives = 4;
+            CanvasHUD.health = 3;
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
             Debug.Log("You pass the door");
         } 
@@ -227,17 +226,26 @@ public class HeroKnight : MonoBehaviour {
         } 
 
         if (collision.gameObject.tag == "Trap") {
-            GameManager.lives--;
+            CanvasHUD.health--;
             transform.position = posicionInicialJugador;
-
-            if (GameManager.lives == 1)
+            
+            if (CanvasHUD.health <= 0)
             {   
                 m_animator.SetBool("noBlood", false);
                 m_animator.SetTrigger("Death");
                 collision.enabled = false;
-                m_body2d.constraints = RigidbodyConstraints2D.FreezePosition;
-                // CAMBIAR ESCENA
+                m_body2d.bodyType = RigidbodyType2D.Static;
+                StartCoroutine(WaitForDeath());
             } 
+        }
+
+        if (collision.gameObject.tag =="ZOOM") 
+        {
+            GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CinemachineVirtualCamera>().enabled = false;
+        }
+
+        if (collision.gameObject.tag == "Finish") {
+            SceneManager.LoadScene("nose");                 // Añadir escena ganar
         }
     }
 
@@ -247,6 +255,11 @@ public class HeroKnight : MonoBehaviour {
         {
             canJump = false;
             m_animator.SetBool("Grounded", canJump);
+        }
+
+        if (collision.gameObject.tag =="ZOOM") 
+        {
+            GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CinemachineVirtualCamera>().enabled = true;
         }
     }
 
@@ -262,6 +275,12 @@ public class HeroKnight : MonoBehaviour {
         {
             collider.enabled = true;
         }
+     }
+
+     IEnumerator WaitForDeath()
+     {
+        yield return new WaitForSeconds(2.0f);
+        SceneManager.LoadScene("Start");
      }
     
 }
