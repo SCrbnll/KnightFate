@@ -26,6 +26,7 @@
 
 ¡Prepárate para una emocionante aventura llena de peligros y desafíos en Knight Fate!
 
+![Knight Fate](knight_fate_new.png)
 
 ## Video demostrativo
 
